@@ -18,6 +18,12 @@ import { useSelector } from "react-redux";
 import { CardTable } from "@/components/shared-components/CardTable";
 import { Link } from "react-router-dom";
 
+import * as XLSX from "xlsx";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
 export function TablePenugasan() {
   useDocumentTitle("Halaman Penugasan");
   useScrollToTop();
@@ -48,6 +54,8 @@ export function TablePenugasan() {
     setSelectedPenugasan(null); // Reset
   };
 
+  const todayDate = dayjs().format("dddd,DD-MM-YYYY");
+
   const { data, isError, isLoading, refetch } = useQuery({
     queryKey: ["penugasanData", searchQuery],
     queryFn: async () => {
@@ -67,6 +75,94 @@ export function TablePenugasan() {
     },
   });
   const dataPenugasan = data || [];
+
+  const handleDownloadExcel = () => {
+    const newData = dataPenugasan.map((row) => {
+      return {
+        ...row,
+        email: row.user.email,
+        name: row.user.name,
+        role: row.user.role,
+        jabatan: row.user.pegawai.jabatan,
+      };
+    });
+    const workSheet = XLSX.utils.json_to_sheet(newData);
+    const workBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workBook, workSheet, "penugasan");
+    XLSX.writeFile(workBook, `Rekap_Penugasan_Radenmat-${todayDate}.xlsx`);
+  };
+
+  const handleDownloadPdf = () => {
+    const columns = [
+      { header: "ID", datakey: "uuid" },
+      { header: "Judul", datakey: "judul" },
+      { header: "Divisi", datakey: "divisi" },
+      { header: "Penempatan", datakey: "penempatan" },
+      { header: "Durasi Waktu penugasan", datakey: "durasi_waktu" },
+      { header: "Tanggal Mulai tugas", datakey: "start" },
+      { header: "Dibuat Oleh", datakey: "createdby" },
+      { header: "Status", datakey: "status_tugas" },
+      { header: "Task Diselesaikan", datakey: "completedTasks" },
+      { header: "Task Belum Selesai", datakey: "incompletedTasks" },
+    ];
+
+    const formattedData = dataPenugasan.map((row) => {
+      const durasiWaktu = JSON.parse(row.durasi_waktu);
+      const tasksList = JSON.parse(row.tasks_list);
+      const completedTasks = tasksList
+        .filter((task) => task.checked === true)
+        .map((task) => task.name)
+        .join(", ");
+      const incompletedTasks = tasksList
+        .filter((task) => task.checked === false)
+        .map((task) => task.name)
+        .join(", ");
+      return {
+        uuid: row.uuid.slice(0, 5),
+        judul: row.judul,
+        divisi: row.divisi,
+        penempatan: row.penempatan,
+        durasi_waktu: durasiWaktu
+          .map((d) => `${d.start} - ${d.end}`)
+          .join(", "),
+        start: dayjs(durasiWaktu[0].start).format("DD MMMM YYYY"),
+        createdby: row.user.name,
+        status_tugas: row.status_tugas,
+        completedTasks: completedTasks,
+        incompletedTasks: incompletedTasks,
+      };
+    });
+
+    const docspdf = new jsPDF();
+    docspdf.setFontSize(15);
+    docspdf.text(
+      "Data Rekap Penugasan",
+      docspdf.internal.pageSize.getWidth() / 2,
+      12,
+      { align: "center" },
+    );
+    docspdf.autoTable({
+      theme: "grid",
+      head: [columns.map((col) => col.header)],
+      body: formattedData.map((row) => columns.map((col) => row[col.datakey])),
+      columnStyles: {
+        0: { cellWidth: 15, fontSize: 8 }, // ID
+        1: { cellWidth: 20, fontSize: 8 }, // judul
+        2: { cellWidth: 15, fontSize: 8 }, // divisi
+        3: { cellWidth: 25, fontSize: 8 }, // penempatan
+        4: { cellWidth: 30, fontSize: 8 }, // durasi waktu
+        5: { cellWidth: 20, fontSize: 8 }, // waktu mulai
+        6: { cellWidth: 15, fontSize: 8 }, // dibuat oleh
+        7: { cellWidth: 15, fontSize: 8 }, // status
+        8: { cellWidth: 25, fontSize: 8 }, // completedTasks
+        9: { cellWidth: 25, fontSize: 8 }, // incompletedTasks
+      },
+      margin: { right: 10, left: 5 },
+      styles: { overflow: "linebreak" },
+    });
+    docspdf.save(`Penugasan_Radenmat-${todayDate}.pdf`);
+  };
+
   console.log("table tugas", dataPenugasan);
   return (
     <>
@@ -97,6 +193,8 @@ export function TablePenugasan() {
           setSearchValue={setSearchValue}
           title="Daftar Penugasan"
           placeholder="data penugasan (judul/divisi)"
+          handleDownloadExcel={handleDownloadExcel}
+          handleDownloadPdf={handleDownloadPdf}
         />
         <ConfigProvider
           theme={{
