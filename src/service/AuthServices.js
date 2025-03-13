@@ -2,19 +2,6 @@ import Cookies from "js-cookie";
 
 export class AuthService {
   isAuthorized() {
-    // const sessionId = this.getSessionId();
-    // if (sessionId !== null && sessionId !== undefined && sessionId !== "") {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
-    // return !!sessionId;
-
-    // if (this.getToken()) {
-    //   return true;
-    // }
-    // return false;
-
     try {
       const token = Cookies.get("token");
       if (!token) {
@@ -29,35 +16,21 @@ export class AuthService {
   validateToken() {
     try {
       const token = Cookies.get("token");
-      if (!token) {
-        return false;
-      }
+      return !!token; // biar return true kalau token ada
     } catch (error) {
       console.error(error);
+      return false;
     }
   }
 
-  // storeSessionIdToCookie(sessionId) {
-  //   Cookies.set("token", sessionId, {
-  //     secure: false,
-  //     sameSite: "strict",
-  //   });
-  //   console.log("Session ID stored in cookie:", sessionId);
-  // }
-
-  // getSessionId() {
-  //   const sessionId = Cookies.get("token");
-  //   if (sessionId) {
-  //     console.log("Session ID retrieved from cookie:", sessionId);
-  //     return sessionId;
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
-  // getTokenSession() {
-  //   Cookies.get("token");
-  // }
+  storeTokenToCookie(token) {
+    Cookies.set("token", token, {
+      secure: true, // Harus true karena pakai SameSite=None
+      sameSite: "None",
+      expires: 7, // Token bertahan 7 hari
+    });
+    console.log("Token stored in cookie:", token);
+  }
 
   clearSessionIdFromCookie() {
     Cookies.remove("token");
