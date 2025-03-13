@@ -24,11 +24,17 @@ export class AuthService {
   }
 
   storeTokenToCookie(token) {
+    if (!token) {
+      console.error("Token is undefined or null!");
+      return;
+    }
+
     Cookies.set("token", token, {
-      secure: true, // Harus true karena pakai SameSite=None
+      secure: true,
       sameSite: "None",
-      expires: 7, // Token bertahan 7 hari
+      expires: 7, // exp 7 hari
     });
+
     console.log("Token stored in cookie:", token);
   }
 
