@@ -1,12 +1,15 @@
 import { AxiosError } from "axios";
 import { axiosInstance } from "@/configs/axiosInstance";
-// import { authService } from "../configs/auth";
+import { authService } from "@/configs/auth";
 
 export const APIauth = {
   login: async (data) => {
     try {
       const result = await axiosInstance.post("/login", data);
       console.log("Login response:", result);
+
+      // 🔥 Simpan token ke cookie setelah login berhasil
+      authService.storeTokenToCookie(result.data.token);
 
       return result.data;
     } catch (err) {
@@ -35,6 +38,10 @@ export const APIauth = {
     try {
       const result = await axiosInstance.delete("/logout");
       console.log("Logout response:", result);
+
+      // 🔥 Hapus token dari cookie saat logout
+      authService.clearSessionIdFromCookie();
+
       return result.data;
     } catch (err) {
       if (err instanceof AxiosError) {
