@@ -12,7 +12,8 @@ export const APIauth = {
       //   throw new Error("Token is missing in response");
       // }
       // // simpan token ke cookie setelah login berhasil
-      // authService.storeTokenToCookie(result.data.token);
+      const { token } = result.data.response;
+      authService.storeTokenToCookie({ token });
 
       return result.data;
     } catch (err) {

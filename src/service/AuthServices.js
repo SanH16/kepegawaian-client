@@ -23,7 +23,7 @@ export class AuthService {
     }
   }
 
-  storeTokenToCookie(token) {
+  storeTokenToCookie({ token, data }) {
     if (!token) {
       console.error("Token is undefined or null!");
       return;
@@ -32,8 +32,9 @@ export class AuthService {
     Cookies.set("token", token, {
       secure: true,
       sameSite: "None",
-      expires: 7, // exp 7 hari
+      expires: 1, // exp 1 hari
     });
+    localStorage.setItem("data", JSON.stringify(data));
 
     console.log("Token stored in cookie:", token);
   }
