@@ -130,7 +130,7 @@ export default function DetailLowongan() {
             )}
           </Flex>
         ) : (
-          <Flex justify="space-between" className="mx-[5px] mb-6">
+          <Flex justify="space-between" className="mx-20 mb-6 sm:mx-5">
             <Link to="/">
               <Button
                 id="button-back"
@@ -160,7 +160,7 @@ export default function DetailLowongan() {
           </Flex>
         )}
 
-        <Card className={!isAuthenticated && "mx-[5px]"}>
+        <Card className={!isAuthenticated && "mx-20 sm:mx-5"}>
           <>
             {isLoading ? (
               <>
