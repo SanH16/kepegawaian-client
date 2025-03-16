@@ -111,7 +111,7 @@ export default function UpdatePegawai() {
         setValue("status_menikah", result.status_menikah);
         setValue("status_bekerja", result.status_bekerja);
         setValue("gaji_pegawai", result.gaji_pegawai);
-        setImagePreview(`http://localhost:5000/images/${result.photo}`);
+        setImagePreview(result.photo);
       } catch (error) {
         console.error(error);
       }

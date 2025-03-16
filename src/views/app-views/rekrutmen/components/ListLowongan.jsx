@@ -134,8 +134,7 @@ export function ListingLowongan() {
                         ) : (
                           <Image
                             alt={item?.image_desc}
-                            // src={item?.image_rekrutmen}
-                            src={`http://localhost:5000/images/${item?.image_rekrutmen}`}
+                            src={item?.image_rekrutmen}
                             className="h-[200px] md:h-[190px] lg:h-[200px] xl:h-[250px]"
                             preview={false}
                             fallback={dataConstant[0].image}
