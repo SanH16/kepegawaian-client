@@ -248,7 +248,7 @@ export default function DetailLowongan() {
                 id="image-lowongan"
                 className="h-[250px] max-w-[800px] sm:h-[300px] md:h-[380px] lg:h-[403px] xl:h-[433px]"
                 // src={dataConstant[1].image}
-                src={`http://localhost:5000/images/${detailRekrutmen?.image_rekrutmen}`}
+                src={detailRekrutmen?.image_rekrutmen}
                 alt={detailRekrutmen?.image_desc}
                 fallback={dataConstant[1].image}
                 preview={true}

@@ -144,9 +144,7 @@ const UpdateLowongan = () => {
         setValue("image_rekrutmen", result.image_rekrutmen); // gmbr
         // console.log("Fetched img:", result.image_rekrutmen);
         setValue("image_desc", result.image_desc);
-        setImagePreview(
-          `http://localhost:5000/images/${result.image_rekrutmen}`,
-        );
+        setImagePreview(result.image_rekrutmen);
         setValue("text_desc", result.text_desc);
       } catch (error) {
         console.error(error);

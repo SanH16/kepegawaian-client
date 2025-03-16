@@ -83,7 +83,7 @@ export default function UserProfile() {
             <div className="flex justify-center md:col-span-1 lg:col-span-3 xl:col-span-2">
               <div id="doctor-image">
                 <Image
-                  src={`http://localhost:5000/images/${pegawaiData?.[0]?.photo}`}
+                  src={pegawaiData?.[0]?.photo}
                   alt="profile-doctor"
                   fallback={anonymousPict}
                   preview={true}
