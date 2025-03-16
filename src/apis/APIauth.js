@@ -8,11 +8,8 @@ export const APIauth = {
       const result = await axiosInstance.post("/login", data);
       console.log("Login response:", result);
 
-      // if (!result.data.token) {
-      //   throw new Error("Token is missing in response");
-      // }
-      // // simpan token ke cookie setelah login berhasil
-      const { token } = result.data.response;
+      // Get token directly from result.data since it's not nested under response
+      const { token } = result.data;
       authService.storeTokenToCookie({ token });
 
       return result.data;
