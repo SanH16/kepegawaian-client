@@ -2,6 +2,33 @@ import { AxiosError } from "axios";
 import { axiosInstance } from "@/configs/axiosInstance";
 import { showSuccessToast } from "@/components/shared-components/Toast";
 
+// Helper function untuk membuat FormData
+const createFormDataFromObject = (data) => {
+  const formData = new FormData();
+
+  // Handle file khusus untuk image_rekrutmen
+  if (data.image_rekrutmen) {
+    if (data.image_rekrutmen instanceof File) {
+      formData.append("image_rekrutmen", data.image_rekrutmen);
+    } else if (
+      typeof data.image_rekrutmen === "string" &&
+      data.image_rekrutmen.startsWith("data:image")
+    ) {
+      // Skip if it's a base64 image and no new file was uploaded
+      return null;
+    }
+  }
+
+  // Handle data lainnya
+  Object.keys(data).forEach((key) => {
+    if (key !== "image_rekrutmen") {
+      formData.append(key, data[key]);
+    }
+  });
+
+  return formData;
+};
+
 export const APIrekrutmen = {
   getAllRekrutmens: async () => {
     try {
@@ -33,10 +60,9 @@ export const APIrekrutmen = {
 
   updateRekrutmen: async (id, data) => {
     try {
-      const result = await axiosInstance.patch(`/rekrutmens/${id}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const formData = createFormDataFromObject(data);
+      const result = await axiosInstance.patch(`/rekrutmens/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("update rekrutmen", result);
       return result.data;
@@ -51,10 +77,9 @@ export const APIrekrutmen = {
 
   createRekrutmen: async (data) => {
     try {
-      const result = await axiosInstance.post("/rekrutmens", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const formData = createFormDataFromObject(data);
+      const result = await axiosInstance.post("/rekrutmens", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("rekrutmen dibuat", result);
       return result.data;
