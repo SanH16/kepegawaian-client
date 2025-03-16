@@ -83,16 +83,18 @@ const UpdateLowongan = () => {
       .required("Referensi harus diisi"),
     image_rekrutmen: yup
       .mixed()
-      .required("Gambar harus diisi Bro!")
-      .test(
-        "fileSize",
-        "Ukuran file terlalu besar, maksimal 1 MB",
-        (value) => value && value.size <= MAX_IMAGE_SIZE,
+      .test("fileSize", "Ukuran file terlalu besar, maksimal 1 MB", (value) =>
+        !value || value instanceof File
+          ? !value || value.size <= MAX_IMAGE_SIZE
+          : true,
       )
       .test(
         "fileType",
         "Format file tidak valid, hanya file gambar yang diperbolehkan",
-        (value) => value && ALLOWED_IMAGE_TYPE.includes(value.type),
+        (value) =>
+          !value || value instanceof File
+            ? !value || ALLOWED_IMAGE_TYPE.includes(value.type)
+            : true,
       ),
     image_desc: yup
       .string()
@@ -138,13 +140,10 @@ const UpdateLowongan = () => {
         const tags = result.tags
           .split(", ")
           .map((tag) => ({ value: tag, label: tag }));
-        // console.log("Fetched tags:", tags);
         setValue("tags", tags);
         setValue("reference", result.reference);
-        setValue("image_rekrutmen", result.image_rekrutmen); // gmbr
-        // console.log("Fetched img:", result.image_rekrutmen);
-        setValue("image_desc", result.image_desc);
         setImagePreview(result.image_rekrutmen);
+        setValue("image_desc", result.image_desc);
         setValue("text_desc", result.text_desc);
       } catch (error) {
         console.error(error);
@@ -157,6 +156,8 @@ const UpdateLowongan = () => {
     const newData = {
       ...data,
       tags: data.tags.join(", "),
+      image_rekrutmen:
+        data.image_rekrutmen instanceof File ? data.image_rekrutmen : null,
     };
     setInputData(newData);
     handleOpenModalConfirm();
@@ -167,6 +168,20 @@ const UpdateLowongan = () => {
   };
   const handleOpenModalConfirm = () => {
     setIsShowConfirm((prev) => !prev);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create a local URL for preview
+      const localPreviewUrl = URL.createObjectURL(file);
+      setImagePreview(localPreviewUrl);
+      setValue("image_rekrutmen", file);
+      clearErrors("image_rekrutmen");
+
+      // Clean up the URL when component unmounts
+      return () => URL.revokeObjectURL(localPreviewUrl);
+    }
   };
 
   return (
@@ -335,12 +350,7 @@ const UpdateLowongan = () => {
                       type="file"
                       className="hidden"
                       accept=".jpg,.jpeg,.png"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        setImagePreview(URL.createObjectURL(file));
-                        setValue("image_rekrutmen", file);
-                        clearErrors("image_rekrutmen");
-                      }}
+                      onChange={handleImageChange}
                     />
                   </label>
                   <div className="flex flex-col pt-2">

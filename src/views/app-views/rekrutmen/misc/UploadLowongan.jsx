@@ -78,16 +78,17 @@ const UploadLowongan = () => {
       .required("Referensi harus diisi"),
     image_rekrutmen: yup
       .mixed()
-      .required("Gambar harus diisi Bro!")
+      .required("Gambar harus diisi")
       .test(
         "fileSize",
         "Ukuran file terlalu besar, maksimal 1 MB",
-        (value) => value && value.size <= MAX_IMAGE_SIZE,
+        (value) => value instanceof File && value.size <= MAX_IMAGE_SIZE,
       )
       .test(
         "fileType",
         "Format file tidak valid, hanya file gambar yang diperbolehkan",
-        (value) => value && ALLOWED_IMAGE_TYPE.includes(value.type),
+        (value) =>
+          value instanceof File && ALLOWED_IMAGE_TYPE.includes(value.type),
       ),
     image_desc: yup
       .string()
@@ -113,10 +114,9 @@ const UploadLowongan = () => {
 
   const createRekrutmen = async (data) => {
     try {
-      const result = await APIrekrutmen.createRekrutmen(data);
+      await APIrekrutmen.createRekrutmen(data);
       showSuccessToast("Lowongan berhasil dibuat", "top-center", "large");
       globalRoute.navigate(`/rekrutmen`);
-      console.log("post rekrutmen", result);
     } catch (err) {
       console.error(err);
       showErrorToast("Lowongan gagal diunggah", "top-center", "large");
@@ -124,11 +124,11 @@ const UploadLowongan = () => {
   };
 
   const onSubmitArticle = (data) => {
-    const newData = {
+    const formattedData = {
       ...data,
       tags: data.tags.join(", "),
     };
-    setInputData(newData);
+    setInputData(formattedData);
     handleOpenModalConfirm();
   };
 
@@ -137,6 +137,20 @@ const UploadLowongan = () => {
   };
   const handleOpenModalConfirm = () => {
     setIsShowConfirm((prev) => !prev);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create a local URL for preview
+      const localPreviewUrl = URL.createObjectURL(file);
+      setImagePreview(localPreviewUrl);
+      setValue("image_rekrutmen", file);
+      clearErrors("image_rekrutmen");
+
+      // Clean up the URL when component unmounts
+      return () => URL.revokeObjectURL(localPreviewUrl);
+    }
   };
 
   return (
@@ -305,12 +319,7 @@ const UploadLowongan = () => {
                       type="file"
                       className="hidden"
                       accept=".jpg,.jpeg,.png"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        setImagePreview(URL.createObjectURL(file));
-                        setValue("image_rekrutmen", file);
-                        clearErrors("image_rekrutmen");
-                      }}
+                      onChange={handleImageChange}
                     />
                   </label>
                   <div className="flex flex-col pt-2">
