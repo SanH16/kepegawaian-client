@@ -9,6 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ModalConfirm } from "@/components/shared-components/ModalConfirm";
 import { ModalCancel } from "@/components/shared-components/ModalCancel";
 import { globalRoute } from "@/utils/GlobalRoute";
+import { imageUrl } from "@/utils/constant";
 
 import {
   showErrorToast,
@@ -111,7 +112,7 @@ export default function UpdatePegawai() {
         setValue("status_menikah", result.status_menikah);
         setValue("status_bekerja", result.status_bekerja);
         setValue("gaji_pegawai", result.gaji_pegawai);
-        setImagePreview(result.photo);
+        setImagePreview(imageUrl(result.photo));
       } catch (error) {
         console.error(error);
       }

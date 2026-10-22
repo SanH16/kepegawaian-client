@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
 import { APIpegawai } from "@/apis/APIpegawai";
+import { imageUrl } from "@/utils/constant";
 
 export default function UserProfile() {
   const stateDataUser = useSelector(selectGetUserLogin);
@@ -33,6 +34,7 @@ export default function UserProfile() {
   }
 
   const stats = pegawaiData?.[0]?.status_bekerja;
+  const photoSrc = imageUrl(pegawaiData?.[0]?.photo);
 
   return (
     <>
@@ -78,14 +80,15 @@ export default function UserProfile() {
             </Link>
           )}
         </div>
-        {stateDataUser?.status === "success" && (
+        {stateDataUser?.status === "success" && !isLoading && (
           <div className="my-4 items-center space-y-4 md:grid md:grid-cols-2 lg:grid-cols-12">
             <div className="flex justify-center md:col-span-1 lg:col-span-3 xl:col-span-2">
               <div id="doctor-image">
                 <Image
-                  src={pegawaiData?.[0]?.photo}
-                  alt="profile-doctor"
+                  key={photoSrc || "no photo"}
+                  src={photoSrc || anonymousPict}
                   fallback={anonymousPict}
+                  alt="profile-doctor"
                   preview={true}
                   className="my-5 h-32 w-32 rounded-full md:my-0 md:h-36 md:w-36"
                 />

@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { MdOutlineDeleteSweep } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import { thousandSeparator } from "@/utils/ThousandSeparator";
+import { imageUrl } from "@/utils/constant";
 import anonymousPict from "@/assets/anonymous profile.jpg";
 
 export const ColumnPegawai = (handleOpenModalDelete) => [
@@ -25,7 +26,7 @@ export const ColumnPegawai = (handleOpenModalDelete) => [
     fixed: "left",
     render: (val) => (
       <Image
-        src={`http://localhost:5000/images/${val}`}
+        src={imageUrl(val)}
         preview={true}
         fallback={anonymousPict}
         className="h-10 w-10 rounded-full"

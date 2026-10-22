@@ -1,26 +1,14 @@
 import Cookies from "js-cookie";
 
+const TOKEN_KEY = "auth_token";
+const isHttps = window.location.protocol === "https:";
 export class AuthService {
   isAuthorized() {
-    try {
-      const token = Cookies.get("token");
-      if (!token) {
-        return false;
-      }
-      return true;
-    } catch (error) {
-      console.error(error);
-    }
+    return !!Cookies.get(TOKEN_KEY);
   }
 
   validateToken() {
-    try {
-      const token = Cookies.get("token");
-      return !!token; // biar return true kalau token ada
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
+    return !!Cookies.get(TOKEN_KEY);
   }
 
   storeTokenToCookie({ token, data }) {
@@ -29,24 +17,19 @@ export class AuthService {
       return;
     }
 
-    Cookies.set("token", token, {
-      secure: true,
-      sameSite: "None",
+    Cookies.set(TOKEN_KEY, token, {
+      secure: isHttps,
+      sameSite: isHttps ? "None" : "Lax",
       expires: 1, // exp 1 hari
     });
     localStorage.setItem("data", JSON.stringify(data));
-
-    console.log("Token stored in cookie:", token);
   }
 
   clearSessionIdFromCookie() {
-    Cookies.remove("token");
+    Cookies.remove(TOKEN_KEY);
   }
 
   getToken() {
-    if (this.validateToken()) {
-      return Cookies.get("token");
-    }
-    return false;
+    return Cookies.get(TOKEN_KEY) || false;
   }
 }

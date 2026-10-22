@@ -6,6 +6,7 @@ import anonymousPict from "@/assets/anonymous profile.jpg";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { APIpenugasan } from "@/apis/APIpenugasan";
+import { imageUrl } from "@/utils/constant";
 
 const UpdateTugas = ({ onClose, refetchPenugasan, updateData }) => {
   const [checkedList, setCheckedList] = useState([]);
@@ -106,7 +107,7 @@ const UpdateTugas = ({ onClose, refetchPenugasan, updateData }) => {
           <p className="text-sm font-medium text-gray-600">Dibuat oleh:</p>
           <div className="flex items-center text-sm font-normal text-gray-500">
             <Image
-              src={`http://localhost:5000/images/${updateData.user.photo}`}
+              src={imageUrl(updateData.user.photo)}
               preview={false}
               fallback={anonymousPict}
               className="m-2 flex h-8 w-8 rounded-full"
