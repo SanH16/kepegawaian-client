@@ -3,9 +3,10 @@
 import { Button, Tag, Tooltip } from "antd";
 import { MdOutlineDeleteSweep } from "react-icons/md";
 import { HiOutlineFolderDownload } from "react-icons/hi";
+import { CONST } from "@/utils/constant";
 
 export const renderDokumen = (dokumen) => {
-  const baseUrl = "http://localhost:5000/docfiles/";
+  const baseUrl = `${CONST.BASE_URL_API}/docfiles/`;
   return (
     <div>
       {dokumen ? (

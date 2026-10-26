@@ -13,6 +13,7 @@ import {
 } from "@/store/auth-get-user-slice";
 import { useEffect } from "react";
 import { Flex, Image, Skeleton } from "antd";
+import { imageUrl } from "@/utils/constant";
 
 export default function Topbar() {
   const dispatch = useDispatch();
@@ -55,7 +56,7 @@ export default function Topbar() {
               <a href="/profil">
                 <Image
                   id="profile-user-topbar"
-                  src={`http://localhost:5000/images/${dataUser?.pegawai?.photo}`}
+                  src={imageUrl(dataUser?.pegawai?.photo)}
                   fallback={anonymousPict}
                   preview={false}
                   alt="profile-user"

@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { selectGetUserLogin } from "@/store/auth-get-user-slice";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { IoIosTimer } from "react-icons/io";
+import { imageUrl } from "@/utils/constant";
 
 export const ColumnAbsensi = (handleOpenModalDelete) => {
   const userState = useSelector(selectGetUserLogin);
@@ -88,7 +89,7 @@ export const ColumnAbsensi = (handleOpenModalDelete) => {
         val ? (
           <div className="flex justify-center">
             <Image
-              src={`http://localhost:5000/images/${val}`}
+              src={imageUrl(val)}
               onClick={(val) => val.stopPropagation()}
               preview={true}
               fallback={anonymousPict}

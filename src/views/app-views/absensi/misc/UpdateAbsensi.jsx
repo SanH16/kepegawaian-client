@@ -10,6 +10,7 @@ import { ModalConfirm } from "@/components/shared-components/ModalConfirm";
 import { ModalCancel } from "@/components/shared-components/ModalCancel";
 
 import imagePrev from "@/assets/content-pages.png";
+import { imageUrl } from "@/utils/constant";
 
 import {
   showErrorToast,
@@ -77,7 +78,7 @@ export default function UpdateAbsensi({ onClose, refetchAbsensi, updateData }) {
       );
       setValue("status", updateData.status);
       setValue("keterangan", updateData.keterangan);
-      setImagePreview(`http://localhost:5000/images/${updateData.bukti_photo}`);
+      setImagePreview(imageUrl(updateData.bukti_photo));
     }
   }, [updateData, setValue]);
 

@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { selectGetUserLogin } from "@/store/auth-get-user-slice";
 import { MdOutlineDeleteSweep } from "react-icons/md";
 import { IoInformationCircleOutline } from "react-icons/io5";
+import { imageUrl } from "@/utils/constant";
 
 export const ColumnPenugasan = (handleOpenModalDelete) => {
   const userState = useSelector(selectGetUserLogin);
@@ -97,7 +98,7 @@ export const ColumnPenugasan = (handleOpenModalDelete) => {
           <>
             <Tooltip title={record.user.name}>
               <Image
-                src={`http://localhost:5000/images/${val}`}
+                src={imageUrl(val)}
                 preview={false}
                 fallback={anonymousPict}
                 className="m-2 h-8 w-8 rounded-full"
